@@ -15,7 +15,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 
 ## Declare a catkin package
 catkin_package(
-  CATKIN_DEPENDS roscpp rospeex_if roslib
+  CATKIN_DEPENDS roscpp rospeex_if roslib third_robot_sound
   DEPENDS system_lib
 )
 
