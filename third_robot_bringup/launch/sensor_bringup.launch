@@ -1,0 +1,26 @@
+<launch>
+  <param name="hokuyo_node0/port" value="/dev/sensors/hokuyo_H1101683"/>
+  <param name="hokuyo_node0/frame_id" value="front_bottom_lrf"/>
+  <node pkg="hokuyo_node" type="hokuyo_node" name="hokuyo_node0" output="screen">
+    <remap from="hokuyo_node" to="hokuyo_node0" />
+    <remap from="scan" to="base_scan" />
+    <param name="min_ang" type="double" value="-2.0" />
+    <param name="max_ang" type="double" value="2.0" />
+  </node>
+  
+  <param name="hokuyo_node2/port" value="/dev/sensors/hokuyo_H0807317"/>
+  <param name="hokuyo_node2/frame_id" value="rear_bottom_lrf"/>
+  <node pkg="hokuyo_node" type="hokuyo_node" name="hokuyo_node2" output="screen">
+    <remap from="hokuyo_node" to="hokuyo_node2" />
+    <remap from="scan" to="base_scan2" />
+    <param name="min_ang" type="double" value="-2.0" />
+    <param name="max_ang" type="double" value="2.0" />
+  </node>
+
+  <node name="hokuyo3d" pkg="hokuyo3d" type="hokuyo3d" output="screen" >
+    <rosparam param="ip">"192.168.0.10"</rosparam>
+    <rosparam param="output_cycle">"field"</rosparam>
+    <rosparam param="frame_id">"front_top_3durg"</rosparam>
+  </node>
+  
+</launch>
