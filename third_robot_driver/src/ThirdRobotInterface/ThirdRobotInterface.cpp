@@ -181,21 +181,21 @@ geometry_msgs::Twist cirkit::ThirdRobotInterface::drive(double linear_speed, dou
 		  front_angle_deg = -60;	  
 		}
 	}
-  else if(0 < linear_speed && linear_speed <= 0.3 && fabs(angular_speed) > 0.0)
-	{	
-	  rear_speed_m_s = 0.3;
-	  front_angle_deg = 1.8*angular_speed*(180.0/M_PI);
-	  //front_angle_deg = atan((angular_speed*1.1)/linear_speed) * (180.0/M_PI);
-	}
-  else if(linear_speed <= 0.3)
-	{
-	  rear_speed_m_s = linear_speed;
-	  front_angle_deg = 1.8*angular_speed*(180.0/M_PI);
-	  //front_angle_deg = atan((angular_speed*1.1)/linear_speed) * (180.0/M_PI);
-	}
+  // else if(0 < linear_speed && linear_speed <= 0.3 && fabs(angular_speed) > 0.0)
+  //       {	
+  //         rear_speed_m_s = 0.3;
+  //         front_angle_deg = 1.8*angular_speed*(180.0/M_PI);
+  //         //front_angle_deg = atan((angular_speed*1.1)/linear_speed) * (180.0/M_PI);
+  //       }
+  // else if(linear_speed <= 0.3)
+  //       {
+  //         rear_speed_m_s = linear_speed;
+  //         front_angle_deg = 1.8*angular_speed*(180.0/M_PI);
+  //         //front_angle_deg = atan((angular_speed*1.1)/linear_speed) * (180.0/M_PI);
+  //       }
   else
 	{
-	  rear_speed_m_s = 1.5;
+	  rear_speed_m_s = linear_speed*3.0;
 	  front_angle_deg = angular_speed*(180.0/M_PI);
 	  //front_angle_deg = atan((angular_speed*1.1)/linear_speed) * (180.0/M_PI);
 	}
@@ -249,7 +249,7 @@ geometry_msgs::Twist cirkit::ThirdRobotInterface::driveDirect(double front_angul
 
 			if(rear_speed == 0.0)
 			{ 
-				u = 32767; 
+				u = 32767;
 			}
 			duty = MIN(u, 60000);
 			duty = MAX(duty, 32767);
@@ -306,23 +306,29 @@ geometry_msgs::Twist cirkit::ThirdRobotInterface::driveDirect(double front_angul
 			writeCmd(cmd_ccmd);
 
 			stasis_ = ROBOT_STASIS_BACK;
+                        ROS_INFO("ROBOT_STASIS_BACK");
 		}
 		else
 		{ // Now forwarding
-			cmd_ccmd.offset[0] = 32767; // iMCs01 CH101 PIN2 is 0[V].  Backing flag.
+			cmd_ccmd.offset[0] = 65535; // iMCs01 CH101 PIN2 is 0[V].  Backing flag.
 			cmd_ccmd.offset[1] = 32767; // STOP
 			
 			writeCmd(cmd_ccmd);
 
-			if(back_stop_cnt >= 100)//40)
+			if(back_stop_cnt >= 10)//40)
 			{
 				stasis_ = ROBOT_STASIS_BACK_STOP;
 				back_stop_cnt = 0;
+                                cmd_ccmd.offset[0] = 32767; // iMCs01 CH101 PIN2 is 0[V].  Backing flag.
+                                cmd_ccmd.offset[1] = 32767; // STOP
+                                writeCmd(cmd_ccmd);
+                                ROS_INFO("ROBOT_STASIS_BACK_STOP");
 			}
 			else
 			{
 				stasis_ = ROBOT_STASIS_OTHERWISE;
 				back_stop_cnt++;
+                                ROS_INFO("ROBOT_STASIS_OTHERWISE");
 			}
 		}
 	}
