@@ -91,14 +91,14 @@ private:
 
   gm::Pose2D getCurrentLocalPose () const;
   gm::Twist scaleGivenAccelerationLimits (const gm::Twist& twist, const double time_remaining) const;
-  double nonincreasingCostInterval (const gm::Pose2D& current, const gm::Twist& twist) const;
+  gm::Pose2D getPoseToObstacle (const gm::Pose2D& current, const gm::Twist& twist) const;
   double normalizedPoseCost (const gm::Pose2D& pose) const;
   gm::Twist transformTwist (const gm::Pose2D& pose) const;
   void moveSpacifiedLength (const gm::Twist twist, const double duaration) const;
   void moveSpacifiedLength (const gm::Twist twist, double length, COSTMAP_SEARCH_MODE mode = FORWARD);
   double getCurrentDiff(const gm::Pose2D initialPose, COSTMAP_SEARCH_MODE mode = FORWARD);
   double getCurrentDistDiff(const gm::Pose2D initialPose, const double distination, COSTMAP_SEARCH_MODE mode = FORWARD);
-  double getMinimalDistance(const COSTMAP_SEARCH_MODE mode);
+  double getMinimalDistanceToObstacle(const COSTMAP_SEARCH_MODE mode);
   int determineTurnDirection();
 
 
@@ -128,6 +128,7 @@ private:
   bool only_single_steering_;
   int trial_times_;
   double obstacle_patience_;
+  double obstacle_check_frequency_;
   //-- back
   double linear_vel_back_;
   double step_back_length_;
