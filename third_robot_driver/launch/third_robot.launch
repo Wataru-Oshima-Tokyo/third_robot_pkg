@@ -1,7 +1,6 @@
 <launch>
 
-  <node name="third_robot_driver_node" pkg="third_robot_driver" type="third_robot_driver_node" 
-		output="screen">
+  <node name="third_robot_driver_node" pkg="third_robot_driver" type="third_robot_driver_node">
     <param name="imcs01_port" type="string" value="/dev/urbtc0" />
 	<param name="pulse_rate" type="double" value="45.0" />
 	<param name="geer_rate" type="double" value="33.0" />
