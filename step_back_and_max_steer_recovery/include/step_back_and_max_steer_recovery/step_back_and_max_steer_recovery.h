@@ -31,9 +31,9 @@
 /**
  * \file 
  * 
- * Recovery behavior based on executing a particular twist
+ * Recovery behavior of step back and steer turning
  *
- * \author Bhaskara Marthi
+ * \author Masaru Morita
  */
 
 #ifndef STEP_BACK_AND_MAX_STEER_RECOVERY_H
@@ -43,6 +43,12 @@
 #include <base_local_planner/costmap_model.h>
 #include <costmap_2d/costmap_2d_ros.h>
 #include <geometry_msgs/Pose2D.h>
+
+namespace gm=geometry_msgs;
+namespace cmap=costmap_2d;
+namespace blp=base_local_planner;
+using std::vector;
+using std::max;
 
 namespace step_back_and_max_steer_recovery
 {
@@ -67,12 +73,34 @@ public:
   void runBehavior();
 
 private:
+  enum COSTMAP_SEARCH_MODE
+  {
+    FORWARD,
+    FORWARD_LEFT,
+    FORWARD_RIGHT,
+    BACKWARD
+  };
 
-  geometry_msgs::Pose2D getCurrentLocalPose () const;
-  geometry_msgs::Twist scaleGivenAccelerationLimits (const geometry_msgs::Twist& twist, const double time_remaining) const;
-  double nonincreasingCostInterval (const geometry_msgs::Pose2D& current, const geometry_msgs::Twist& twist) const;
-  double normalizedPoseCost (const geometry_msgs::Pose2D& pose) const;
-  geometry_msgs::Twist transformTwist (const geometry_msgs::Pose2D& pose) const;
+  enum TURN_DIRECTION
+  {
+    LEFT,
+    RIGHT,
+  };
+
+  gm::Twist TWIST_STOP;
+
+  gm::Pose2D getCurrentLocalPose () const;
+  gm::Twist scaleGivenAccelerationLimits (const gm::Twist& twist, const double time_remaining) const;
+  gm::Pose2D getPoseToObstacle (const gm::Pose2D& current, const gm::Twist& twist) const;
+  double normalizedPoseCost (const gm::Pose2D& pose) const;
+  gm::Twist transformTwist (const gm::Pose2D& pose) const;
+  void moveSpacifiedLength (const gm::Twist twist, const double duaration) const;
+  void moveSpacifiedLength (const gm::Twist twist, double length, COSTMAP_SEARCH_MODE mode = FORWARD);
+  double getCurrentDiff(const gm::Pose2D initialPose, COSTMAP_SEARCH_MODE mode = FORWARD);
+  double getCurrentDistDiff(const gm::Pose2D initialPose, const double distination, COSTMAP_SEARCH_MODE mode = FORWARD);
+  double getMinimalDistanceToObstacle(const COSTMAP_SEARCH_MODE mode);
+  int determineTurnDirection();
+
 
   ros::NodeHandle nh_;
   costmap_2d::Costmap2DROS* global_costmap_;
@@ -87,7 +115,7 @@ private:
   // Mutable because footprintCost is not declared const
   mutable base_local_planner::CostmapModel* world_model_;
 
-  geometry_msgs::Twist base_frame_twist_;
+  gm::Twist base_frame_twist_;
   
   double duration_;
   double linear_speed_limit_;
@@ -96,18 +124,21 @@ private:
   double angular_acceleration_limit_;
   double controller_frequency_;
   double simulation_inc_;
-  
+
+  bool only_single_steering_;
   int trial_times_;
+  double obstacle_patience_;
+  double obstacle_check_frequency_;
   //-- back
   double linear_vel_back_;
-  double duration_back_;
+  double step_back_length_;
   //-- steer
   double linear_vel_steer_;
-  double angular_vel_steer_;
-  double duration_steer_;
+  double angular_speed_steer_;
+  double turn_angle_;
   //-- forward
   double linear_vel_forward_;
-  double duration_forward_;
+  double step_forward_length_;
 
 };
 
