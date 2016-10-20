@@ -87,6 +87,13 @@ private:
     RIGHT,
   };
 
+  enum TURN_NO
+  {
+    FIRST_TURN = 0,
+    SECOND_TURN = 1,
+  };
+  static const int CNT_TURN = 2;
+
   gm::Twist TWIST_STOP;
 
   gm::Pose2D getCurrentLocalPose () const;
@@ -94,12 +101,12 @@ private:
   gm::Pose2D getPoseToObstacle (const gm::Pose2D& current, const gm::Twist& twist) const;
   double normalizedPoseCost (const gm::Pose2D& pose) const;
   gm::Twist transformTwist (const gm::Pose2D& pose) const;
-  void moveSpacifiedLength (const gm::Twist twist, const double duaration) const;
-  void moveSpacifiedLength (const gm::Twist twist, double length, COSTMAP_SEARCH_MODE mode = FORWARD);
-  double getCurrentDiff(const gm::Pose2D initialPose, COSTMAP_SEARCH_MODE mode = FORWARD);
-  double getCurrentDistDiff(const gm::Pose2D initialPose, const double distination, COSTMAP_SEARCH_MODE mode = FORWARD);
-  double getMinimalDistanceToObstacle(const COSTMAP_SEARCH_MODE mode);
+  void moveSpacifiedLength (const gm::Twist twist, const double length, const COSTMAP_SEARCH_MODE mode = FORWARD) const;
+  double getCurrentDiff(const gm::Pose2D initialPose, const COSTMAP_SEARCH_MODE mode = FORWARD) const;
+  double getCurrentDistDiff(const gm::Pose2D initialPose, const double distination, const COSTMAP_SEARCH_MODE mode = FORWARD) const;
+  double getMinimalDistanceToObstacle(const COSTMAP_SEARCH_MODE mode) const;
   int determineTurnDirection();
+  double getDistBetweenTwoPoints(const gm::Pose2D pose1, const gm::Pose2D pose2) const;
 
 
   ros::NodeHandle nh_;
@@ -123,22 +130,27 @@ private:
   double linear_acceleration_limit_;
   double angular_acceleration_limit_;
   double controller_frequency_;
+  double simulation_frequency_;
   double simulation_inc_;
 
   bool only_single_steering_;
   int trial_times_;
   double obstacle_patience_;
   double obstacle_check_frequency_;
+  double sim_angle_resolution_;
   //-- back
   double linear_vel_back_;
   double step_back_length_;
+  double step_back_timeout_;
   //-- steer
   double linear_vel_steer_;
   double angular_speed_steer_;
   double turn_angle_;
+  double steering_timeout_;
   //-- forward
   double linear_vel_forward_;
   double step_forward_length_;
+  double step_forward_timeout_;
 
 };
 
