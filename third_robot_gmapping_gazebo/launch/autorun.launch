@@ -1,5 +1,9 @@
 <launch>
   <include file="$(find third_robot_gazebo)/launch/third_robot_world.launch"/>
   <include file="$(find third_robot_gmapping_gazebo)/launch/third_robot_gmapping.launch"/>
-  <include file="$(find third_robot_merge_laser)/launch/third_robot_laserscan_merger.launch"/>
+  <!--include file="$(find third_robot_merge_laser)/launch/third_robot_laserscan_merger.launch"/-->
+  <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+    args="2 third_robot_merge_laser third_robot_laserscan_merger.launch"
+    name="timed_roslaunch" output="screen">
+  </node>
 </launch>
