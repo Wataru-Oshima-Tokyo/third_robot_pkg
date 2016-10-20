@@ -1,18 +1,17 @@
 <launch>
-
-  <include file="$(find third_robot_gazebo)/launch/third_robot_world.launch"/>
   <include file="$(find steer_drive_controller)/launch/steer_drive_test_setting.launch"/>
+  <node pkg="topic_tools" type="relay" name="relay_base_scan" args="/third_robot/laser/base_scan /base_scan"/>
+  <node pkg="topic_tools" type="relay" name="relay_base_scan2" args="/third_robot/laser/base_scan2 /base_scan2"/>
+
+  <!--
   <include file="$(find third_robot_merge_laser)/launch/third_robot_laserscan_merger.launch">
-      <!--<arg name="gazebo" default="true" />-->
   </include>
+  -->
   
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find third_robot_2dnav_gazebo)/config/autorun_gazebo.rviz" required="true" />
 
-  <arg name="scan_topic" default="third_robot/laser/base_scan" />
-  <!-- <arg name="scan_topic" default="scan_multi" />-->
-  <node pkg="topic_tools" type="relay" name="relay_base_scan" args="third_robot/laser/base_scan base_scan"/>
-  <node pkg="topic_tools" type="relay" name="relay_base_scan2" args="third_robot/laser/base_scan2 base_scan2"/>
-
+  <!-- arg name="scan_topic" default="third_robot/laser/base_scan" /-->
+  <arg name="scan_topic" default="scan_multi" />
   <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping">
     <rosparam>
       use_sim_time: true
