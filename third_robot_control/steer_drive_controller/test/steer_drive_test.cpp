@@ -78,6 +78,7 @@ TEST_F(SteerDriveControllerTest, testForward)
   EXPECT_LT(fabs(new_odom.twist.twist.angular.z), EPS);
 }
 
+#if 0
 TEST_F(SteerDriveControllerTest, testTurn)
 {
   // wait for ROS
@@ -123,6 +124,7 @@ TEST_F(SteerDriveControllerTest, testTurn)
   EXPECT_LT(fabs(new_odom.twist.twist.angular.y), EPS);
   EXPECT_NEAR(fabs(new_odom.twist.twist.angular.z), M_PI/10.0, EPS);
 }
+#endif
 
 TEST_F(SteerDriveControllerTest, testOdomFrame)
 {

@@ -55,8 +55,8 @@ if (CATKIN_ENABLE_TESTING)
   find_package(catkin COMPONENTS rostest std_srvs controller_manager tf)
   include_directories(include ${catkin_INCLUDE_DIRS})
 
-  add_executable(steer_drive_bot test/steerbot.cpp)
-  target_link_libraries(steer_drive_bot ${catkin_LIBRARIES})
+  add_executable(steerbot test/steerbot.cpp)
+  target_link_libraries(steerbot ${catkin_LIBRARIES})
 #
 #  add_executable(steer_drive_bot test/skidsteerbot.cpp)
 #  target_link_libraries(steer_drive_bot ${catkin_LIBRARIES})
