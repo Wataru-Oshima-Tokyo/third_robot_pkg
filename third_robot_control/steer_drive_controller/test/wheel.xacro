@@ -2,6 +2,8 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:property name="steer_radius" value="0.05" /> <!-- Link 1 -->
   <xacro:property name="steer_thickness" value="0.02" /> <!-- Link 1 -->
+  <xacro:property name="steer_effort"   value="10.0"/>
+  <xacro:property name="steer_velocity" value="5.0"/>
 
   <macro name="front_wheel" params="name parent radius thickness length width axel_offset right_left steer_height *origin">
     <link name="${name}_steer_link">
@@ -24,13 +26,16 @@
       </collision>
     </link>
 
-    <joint name="${name}_steer_joint" type="continuous">
+    <joint name="${name}_steer_joint" type="revolute">
       <parent link="${parent}_link"/>
       <child link="${name}_steer_link"/>
       <origin xyz="${length/2-axel_offset} ${right_left*(width/2+axel_offset)} ${steer_height}" rpy="0 0 0"/>
       <!--insert_block name="origin"/-->
       <axis xyz="0 0 1"/>
-    </joint>
+      <limit effort="${steer_effort}"
+             lower="${-180.0 * deg_to_rad}" upper="${180.0 * deg_to_rad}"
+             velocity="${steer_velocity}"/>
+     </joint>
 
     <link name="${name}_link">
       <inertial>
