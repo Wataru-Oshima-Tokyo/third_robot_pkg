@@ -27,7 +27,7 @@
 
 /// \author Bence Magyar
 
-#include "test_common.h"
+#include "./common/include/test_common.h"
 #include <tf/transform_listener.h>
 
 // TEST CASES

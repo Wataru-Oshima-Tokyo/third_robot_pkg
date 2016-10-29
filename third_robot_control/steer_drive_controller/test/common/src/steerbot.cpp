@@ -33,7 +33,7 @@
 // ros_control
 #include <controller_manager/controller_manager.h>
 
-#include "steerbot.h"
+#include "./../include/steerbot.h"
 
 int main(int argc, char **argv)
 {

@@ -4,10 +4,10 @@
 
   <!-- load robot -->
   <param name="robot_description"
-         command="$(find xacro)/xacro.py '$(find steer_drive_controller)/test/steerbot.xacro'" />
+      command="$(find xacro)/xacro.py '$(find steer_drive_controller)/test/common/urdf/steerbot.xacro'" />
 
   <!-- Load controller config -->
-  <rosparam command="load" file="$(find steer_drive_controller)/test/steerbot_controllers.yaml" />
+  <rosparam command="load" file="$(find steer_drive_controller)/test/common/config/steerbot_controllers.yaml" />
 
   <!-- Start steerbot -->
   <node name="steerbot"

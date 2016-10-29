@@ -55,7 +55,7 @@ if (CATKIN_ENABLE_TESTING)
   find_package(catkin COMPONENTS rostest std_srvs controller_manager tf)
   include_directories(include ${catkin_INCLUDE_DIRS})
 
-  add_executable(steerbot test/steerbot.cpp)
+  add_executable(steerbot test/common/src/steerbot.cpp)
   target_link_libraries(steerbot ${catkin_LIBRARIES})
 #
 #  add_executable(steer_drive_bot test/skidsteerbot.cpp)
@@ -67,10 +67,10 @@ if (CATKIN_ENABLE_TESTING)
     test/steer_drive_controller.test
     test/steer_drive_test.cpp)
   target_link_libraries(steer_drive_test ${catkin_LIBRARIES})
-#  add_rostest_gtest(steer_drive_nan_test
-#    test/steer_drive_controller_nan.test
-#    test/steer_drive_nan_test.cpp)
-#  target_link_libraries(steer_drive_nan_test ${catkin_LIBRARIES})
+  #  add_rostest_gtest(steer_drive_nan_test
+  #    test/steer_drive_controller_nan.test
+  #    test/steer_drive_nan_test.cpp)
+  #  target_link_libraries(steer_drive_nan_test ${catkin_LIBRARIES})
 #  add_rostest_gtest(steer_drive_limits_test
 #    test/steer_drive_controller_limits.test
 #    test/steer_drive_limits_test.cpp)
