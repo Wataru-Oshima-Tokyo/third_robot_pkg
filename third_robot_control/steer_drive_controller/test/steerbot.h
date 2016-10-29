@@ -45,6 +45,11 @@
 // ostringstream
 #include <sstream>
 
+enum INDEX_WHEEL {
+    INDEX_RIGHT = 0,
+    INDEX_LEFT = 1
+};
+
 template <unsigned int NUM_JOINTS = 2>
 class Steerbot : public hardware_interface::RobotHW
 {
@@ -56,32 +61,14 @@ public:
   , ns_("steerbot_controller/")
   {
     // Intialize raw data
-    std::fill_n(pos_, NUM_JOINTS, 0.0);
-    std::fill_n(vel_, NUM_JOINTS, 0.0);
-    std::fill_n(eff_, NUM_JOINTS, 0.0);
-    std::fill_n(cmd_, NUM_JOINTS, 0.0);
-
     this->clean_up();
     this->get_joint_names(nh_);
     this->register_hardware_interfaces();
 
-    /*
-    // Connect and register the joint state and velocity interface
-    for (unsigned int i = 0; i < NUM_JOINTS; ++i)
-    {
-      std::ostringstream os;
-      os << "wheel_" << i << "_joint";
-
-      hardware_interface::JointStateHandle state_handle(os.str(), &pos_[i], &vel_[i], &eff_[i]);
-      jnt_state_interface_.registerHandle(state_handle);
-
-      hardware_interface::JointHandle vel_handle(jnt_state_interface_.getHandle(os.str()), &cmd_[i]);
-      jnt_vel_interface_.registerHandle(vel_handle);
-    }
-
-    registerInterface(&jnt_state_interface_);
-    registerInterface(&jnt_vel_interface_);
-    */
+    nh_.getParam(ns_ + "wheel_separation_w", wheel_separation_w_);
+    nh_.getParam(ns_ + "wheel_separation_h", wheel_separation_h_);
+    ROS_INFO_STREAM("wheel_separation_w in test steerbot= " << wheel_separation_w_);
+    ROS_INFO_STREAM("wheel_separation_h in test steerbot= " << wheel_separation_h_);
   }
 
   ros::Time getTime() const {return ros::Time::now();}
@@ -90,32 +77,62 @@ public:
   void read()
   {
     std::ostringstream os;
-    for (unsigned int i = 0; i < NUM_JOINTS - 1; ++i)
-    {
-      os << cmd_[i] << ", ";
-    }
-    os << cmd_[NUM_JOINTS - 1];
+    // directly get from controller
+    os << wheel_jnt_vel_cmd_ << ", ";
+    os << steer_jnt_pos_cmd_ << ", ";
 
-    ROS_INFO_STREAM("Commands for joints: " << os.str());
+    // convert to each joint velocity
+    //-- differential drive
+    for (unsigned int i = 0; i < virtual_rear_wheel_jnt_vel_cmd_.size(); i++)
+    {
+      virtual_rear_wheel_jnt_vel_cmd_[i] = wheel_jnt_vel_cmd_;
+      os << virtual_rear_wheel_jnt_vel_cmd_[i] << ", ";
+    }
+
+    //-- ackerman link
+    const double h = wheel_separation_h_;
+    const double w = wheel_separation_w_;
+    virtual_steer_jnt_pos_cmd_[INDEX_RIGHT] = atan2(2*h*tan(steer_jnt_pos_cmd_), 2*h + w/2.0*tan(steer_jnt_pos_cmd_));
+    virtual_steer_jnt_pos_cmd_[INDEX_LEFT] = atan2(2*h*tan(steer_jnt_pos_cmd_), 2*h - w/2.0*tan(steer_jnt_pos_cmd_));
+
+    for (unsigned int i = 0; i < virtual_steer_jnt_pos_cmd_.size(); i++)
+    {
+      os << virtual_steer_jnt_pos_cmd_[i] << ", ";
+    }
+
+    if (wheel_jnt_vel_cmd_ != 0.0 || steer_jnt_pos_cmd_ != 0.0)
+      ROS_INFO_STREAM("Commands for joints: " << os.str());
+
   }
 
   void write()
   {
     if (running_)
     {
-      for (unsigned int i = 0; i < NUM_JOINTS; ++i)
+
+      // wheels
+      for (unsigned int i = 0; i < virtual_rear_wheel_jnt_vel_cmd_.size(); i++)
       {
         // Note that pos_[i] will be NaN for one more cycle after we start(),
         // but that is consistent with the knowledge we have about the state
         // of the robot.
-        pos_[i] += vel_[i]*getPeriod().toSec(); // update position
-        vel_[i] = cmd_[i]; // might add smoothing here later
+        virtual_rear_wheel_jnt_pos_[i] += virtual_rear_wheel_jnt_vel_[i]*getPeriod().toSec();
+        virtual_rear_wheel_jnt_vel_[i] = virtual_rear_wheel_jnt_vel_cmd_[i];
+      }
+
+      // steers
+      for (unsigned int i = 0; i < virtual_steer_jnt_pos_cmd_.size(); i++)
+      {
+        virtual_steer_jnt_pos_[i] = virtual_steer_jnt_pos_cmd_[i];
       }
     }
     else
     {
-      std::fill_n(pos_, NUM_JOINTS, std::numeric_limits<double>::quiet_NaN());
-      std::fill_n(vel_, NUM_JOINTS, std::numeric_limits<double>::quiet_NaN());
+      wheel_jnt_pos_= std::numeric_limits<double>::quiet_NaN();
+      wheel_jnt_vel_= std::numeric_limits<double>::quiet_NaN();
+      std::fill_n(virtual_rear_wheel_jnt_vel_.begin(), virtual_rear_wheel_jnt_vel_.size(), std::numeric_limits<double>::quiet_NaN());
+      std::fill_n(virtual_steer_jnt_pos_.begin(), virtual_steer_jnt_pos_.size(), std::numeric_limits<double>::quiet_NaN());
+      std::fill_n(virtual_steer_jnt_vel_.begin(), virtual_steer_jnt_vel_.size(), std::numeric_limits<double>::quiet_NaN());
     }
   }
 
@@ -303,15 +320,8 @@ private:
   }
 
 private:
-  hardware_interface::JointStateInterface    jnt_state_interface_;
-  hardware_interface::VelocityJointInterface jnt_vel_interface_;
-  double cmd_[NUM_JOINTS];
-  double pos_[NUM_JOINTS];
-  double vel_[NUM_JOINTS];
-  double eff_[NUM_JOINTS];
-
-
-  // rear wheel
+  // common
+  hardware_interface::JointStateInterface jnt_state_interface_;// rear wheel
   //-- actual joint(single actuator)
   //---- joint name
   std::string wheel_jnt_name_;
@@ -367,6 +377,11 @@ private:
   std::vector<double> virtual_steer_jnt_eff_;
   //---- joint interface command
   std::vector<double> virtual_steer_jnt_pos_cmd_;
+
+  // Wheel separation, wrt the midpoint of the wheel width:
+  double wheel_separation_w_;
+  // Wheel separation, wrt the midpoint of the wheel width:
+  double wheel_separation_h_;
 
   std::string ns_;
   bool running_;
