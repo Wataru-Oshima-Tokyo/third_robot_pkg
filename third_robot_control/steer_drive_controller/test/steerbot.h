@@ -50,20 +50,19 @@ enum INDEX_WHEEL {
     INDEX_LEFT = 1
 };
 
-template <unsigned int NUM_JOINTS = 2>
 class Steerbot : public hardware_interface::RobotHW
 {
 public:
   Steerbot()
   : running_(true)
-  , start_srv_(nh_.advertiseService("start", &Steerbot::start_callback, this))
-  , stop_srv_(nh_.advertiseService("stop", &Steerbot::stop_callback, this))
+  , start_srv_(nh_.advertiseService("start", &Steerbot::startCallback, this))
+  , stop_srv_(nh_.advertiseService("stop", &Steerbot::stopCallback, this))
   , ns_("steerbot_controller/")
   {
     // Intialize raw data
-    this->clean_up();
-    this->get_joint_names(nh_);
-    this->register_hardware_interfaces();
+    this->cleanUp();
+    this->getJointNames(nh_);
+    this->registerHardwareInterfaces();
 
     nh_.getParam(ns_ + "wheel_separation_w", wheel_separation_w_);
     nh_.getParam(ns_ + "wheel_separation_h", wheel_separation_h_);
@@ -136,13 +135,13 @@ public:
     }
   }
 
-  bool start_callback(std_srvs::Empty::Request& /*req*/, std_srvs::Empty::Response& /*res*/)
+  bool startCallback(std_srvs::Empty::Request& /*req*/, std_srvs::Empty::Response& /*res*/)
   {
     running_ = true;
     return true;
   }
 
-  bool stop_callback(std_srvs::Empty::Request& /*req*/, std_srvs::Empty::Response& /*res*/)
+  bool stopCallback(std_srvs::Empty::Request& /*req*/, std_srvs::Empty::Response& /*res*/)
   {
     running_ = false;
     return true;
@@ -150,7 +149,7 @@ public:
 
 private:
   
-  void clean_up()
+  void cleanUp()
   {
     // wheel
     //-- wheel joint names
@@ -188,13 +187,13 @@ private:
     virtual_steer_jnt_pos_cmd_.clear();
   }
 
-  void get_joint_names(ros::NodeHandle &_nh)
+  void getJointNames(ros::NodeHandle &_nh)
   {
-    this->get_wheel_joint_names(_nh);
-    this->get_steer_joint_names(_nh);
+    this->getWheelJointNames(_nh);
+    this->getSteerJointNames(_nh);
   }
 
-  void get_wheel_joint_names(ros::NodeHandle &_nh)
+  void getWheelJointNames(ros::NodeHandle &_nh)
   {
     // wheel joint to get linear command
     _nh.getParam(ns_ + "rear_wheel", wheel_jnt_name_);
@@ -213,10 +212,9 @@ private:
     virtual_front_wheel_jnt_vel_.resize(dof);
     virtual_front_wheel_jnt_eff_.resize(dof);
     virtual_front_wheel_jnt_vel_cmd_.resize(dof);
-
   }
 
-  void get_steer_joint_names(ros::NodeHandle &_nh)
+  void getSteerJointNames(ros::NodeHandle &_nh)
   {
     // steer joint to get angular command
     _nh.getParam(ns_ + "front_steer", steer_jnt_name_);
@@ -231,10 +229,10 @@ private:
     virtual_steer_jnt_pos_cmd_.resize(dof);
   }
 
-  void register_hardware_interfaces()
+  void registerHardwareInterfaces()
   {
-    this->register_steer_interface();
-    this->register_wheel_interface();
+    this->registerSteerInterface();
+    this->registerWheelInterface();
 
     // register mapped interface to ros_control
     registerInterface(&jnt_state_interface_);
@@ -242,58 +240,58 @@ private:
     registerInterface(&steer_jnt_pos_cmd_interface_);
   }
 
-  void register_wheel_interface()
+  void registerWheelInterface()
   {
     // actual wheel joints
-    this->register_interface_handles(
+    this->registerInterfaceHandles(
           jnt_state_interface_, wheel_jnt_vel_cmd_interface_,
           wheel_jnt_name_, wheel_jnt_pos_, wheel_jnt_vel_, wheel_jnt_eff_, wheel_jnt_vel_cmd_);
 
     // virtual rear wheel joints
     for (int i = 0; i < virtual_rear_wheel_jnt_names_.size(); i++)
     {
-      this->register_interface_handles(
+      this->registerInterfaceHandles(
             jnt_state_interface_, wheel_jnt_vel_cmd_interface_,
             virtual_rear_wheel_jnt_names_[i], virtual_rear_wheel_jnt_pos_[i], virtual_rear_wheel_jnt_vel_[i], virtual_rear_wheel_jnt_eff_[i], virtual_rear_wheel_jnt_vel_cmd_[i]);
     }
     // virtual front wheel joints
     for (int i = 0; i < virtual_front_wheel_jnt_names_.size(); i++)
     {
-      this->register_interface_handles(
+      this->registerInterfaceHandles(
             jnt_state_interface_, wheel_jnt_vel_cmd_interface_,
             virtual_front_wheel_jnt_names_[i], virtual_front_wheel_jnt_pos_[i], virtual_front_wheel_jnt_vel_[i], virtual_front_wheel_jnt_eff_[i], virtual_front_wheel_jnt_vel_cmd_[i]);
     }
   }
 
-  void register_steer_interface()
+  void registerSteerInterface()
   {
     // actual steer joints
-    this->register_interface_handles(
+    this->registerInterfaceHandles(
           jnt_state_interface_, steer_jnt_pos_cmd_interface_,
           steer_jnt_name_, steer_jnt_pos_, steer_jnt_vel_, steer_jnt_eff_, steer_jnt_pos_cmd_);
 
     // virtual steer joints
     for (int i = 0; i < virtual_steer_jnt_names_.size(); i++)
     {
-      this->register_interface_handles(
+      this->registerInterfaceHandles(
             jnt_state_interface_, steer_jnt_pos_cmd_interface_,
             virtual_steer_jnt_names_[i], virtual_steer_jnt_pos_[i], virtual_steer_jnt_vel_[i], virtual_steer_jnt_eff_[i], virtual_steer_jnt_pos_cmd_[i]);
     }
   }
 
-  void register_interface_handles(
+  void registerInterfaceHandles(
           hardware_interface::JointStateInterface& _jnt_state_interface,
           hardware_interface::JointCommandInterface& _jnt_cmd_interface,
           const std::string _jnt_name, double& _jnt_pos, double& _jnt_vel, double& _jnt_eff,  double& _jnt_cmd)
   {
     // register joint (both JointState and CommandJoint)
-    this->register_joint_state_interface_handle(_jnt_state_interface, _jnt_name,
+    this->registerJointStateInterfaceHandle(_jnt_state_interface, _jnt_name,
                                             _jnt_pos, _jnt_vel, _jnt_eff);
-    this->register_command_joint_interface_handle(_jnt_state_interface, _jnt_cmd_interface,
+    this->registerCommandJointInterfaceHandle(_jnt_state_interface, _jnt_cmd_interface,
                                               _jnt_name, _jnt_cmd);
   }
 
-  void register_joint_state_interface_handle(
+  void registerJointStateInterfaceHandle(
       hardware_interface::JointStateInterface& _jnt_state_interface,
       const std::string _jnt_name, double& _jnt_pos, double& _jnt_vel, double& _jnt_eff)
   {
@@ -306,7 +304,7 @@ private:
     ROS_INFO_STREAM("Registered joint '" << _jnt_name << " ' in the JointStateInterface");
   }
 
-  void register_command_joint_interface_handle(
+  void registerCommandJointInterfaceHandle(
       hardware_interface::JointStateInterface& _jnt_state_interface,
       hardware_interface::JointCommandInterface& _jnt_cmd_interface,
       const std::string _jnt_name, double& _jnt_cmd)
