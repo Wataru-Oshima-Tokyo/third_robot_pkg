@@ -57,7 +57,7 @@
       </collision>
     </link>
 
-    <joint name="${name}_joint" type="continuous">
+    <joint name="${name}_wheel_joint" type="continuous">
       <parent link="${name}_steer_link"/>
       <child link="${name}_wheel_link"/>
       <origin xyz="0 0 ${-steer_height}" rpy="${-90 * deg_to_rad} 0 0"/>
@@ -65,9 +65,15 @@
     </joint>
 
     <!-- Transmission is important to link the joints and the controller -->
-    <transmission name="${name}_joint_trans" type="SimpleTransmission">
-      <actuator name="${name}_joint_motor"/>
-      <joint name="${name}_joint"/>
+    <transmission name="${name}_steer_joint_trans" type="SimpleTransmission">
+      <actuator name="${name}_steer_joint_motor"/>
+      <joint name="${name}_steer_joint"/>
+      <mechanicalReduction>1</mechanicalReduction>
+      <motorTorqueConstant>1</motorTorqueConstant>
+    </transmission>
+    <transmission name="${name}_wheel_joint_trans" type="SimpleTransmission">
+      <actuator name="${name}_wheel_joint_motor"/>
+      <joint name="${name}_wheel_joint"/>
       <mechanicalReduction>1</mechanicalReduction>
       <motorTorqueConstant>1</motorTorqueConstant>
     </transmission>
@@ -75,13 +81,13 @@
     <gazebo reference="${name}_steer_link">
       <material>Gazebo/Blue</material>
     </gazebo>
-    <gazebo reference="${name}_link">
+    <gazebo reference="${name}_wheel_link">
       <material>Gazebo/Red</material>
     </gazebo>
   </macro>
 
   <macro name="rear_wheel" params="name parent radius thickness *origin">
-    <link name="${name}_link">
+    <link name="${name}_wheel_link">
       <inertial>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <mass value="1"/>
@@ -101,22 +107,22 @@
       </collision>
     </link>
 
-    <joint name="${name}_joint" type="continuous">
+    <joint name="${name}_wheel_joint" type="continuous">
       <parent link="${parent}_link"/>
-      <child link="${name}_link"/>
+      <child link="${name}_wheel_link"/>
       <insert_block name="origin"/>
       <axis xyz="0 0 1"/>
     </joint>
 
     <!-- Transmission is important to link the joints and the controller -->
-    <transmission name="${name}_joint_trans" type="SimpleTransmission">
-      <actuator name="${name}_joint_motor"/>
-      <joint name="${name}_joint"/>
+    <transmission name="${name}_wheel_joint_trans" type="SimpleTransmission">
+      <actuator name="${name}_wheel_joint_motor"/>
+      <joint name="${name}_wheel_joint"/>
       <mechanicalReduction>1</mechanicalReduction>
       <motorTorqueConstant>1</motorTorqueConstant>
     </transmission>
 
-    <gazebo reference="${name}_link">
+    <gazebo reference="${name}_wheel_link">
       <material>Gazebo/Red</material>
     </gazebo>
   </macro>
