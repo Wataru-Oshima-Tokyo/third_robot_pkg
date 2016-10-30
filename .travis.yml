@@ -72,7 +72,7 @@ env:
 
 # Install system dependencies, namely a very barebones ROS setup.
 before_install:
-　# Install system dependencies, namely a very barebones ROS setup.
+  # Install system dependencies, namely a very barebones ROS setup.
   - sudo sh -c "echo \"deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main\" > /etc/apt/sources.list.d/ros-latest.list"
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
   - sudo apt-get update -qq
