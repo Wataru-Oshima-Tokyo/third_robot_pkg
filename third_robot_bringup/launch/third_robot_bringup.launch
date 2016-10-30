@@ -13,7 +13,7 @@
   
   <include file="$(find third_robot_merge_laser)/launch/third_robot_laserscan_merger.launch" />
 
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find third_robot_2dnav)/config/autorun2.rviz" required="true" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find third_robot_2dnav)/config/autorun3.rviz" required="true" />
   
 
 </launch>
