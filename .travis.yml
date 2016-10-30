@@ -76,7 +76,8 @@ before_install:
   - sudo sh -c "echo \"deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main\" > /etc/apt/sources.list.d/ros-latest.list"
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
   - sudo apt-get update -qq
-  - sudo apt-get install -y python-catkin-pkg python-rosdep python-wstool ros-$ROS_DISTRO-catkin ros-$ROS_DISTRO-roscpp ros-$ROS_DISTRO-rosconsole ros-$ROS_DISTRO-sensor-msgs ros-$ROS_DISTRO-cv-bridge ros-$ROS_DISTRO-image-transport
+  - sudo apt-get install -y python-catkin-pkg python-rosdep python-wstool ros-$ROS_DISTRO-catkin ros-$ROS_DISTRO-roscpp
+  - sudo apt-get install -y ros-$ROS_DISTRO-rosconsole ros-$ROS_DISTRO-sensor-msgs ros-$ROS_DISTRO-cv-bridge ros-$ROS_DISTRO-image-transport ros-$ROS_DISTRO-rviz
   - source /opt/ros/$ROS_DISTRO/setup.bash
   # Install PCL
   - yes | sudo apt-add-repository ppa:v-launchpad-jochen-sprickerhof-de/pcl; sudo apt-get update -qq; sudo apt-get install -y libpcl-all;
