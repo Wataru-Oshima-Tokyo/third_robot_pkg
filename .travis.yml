@@ -55,7 +55,7 @@ notifications:
   email:
     on_success: change
     on_failue: always
-  slack: nishida-lab:2s3lDRcN7ua3vlljTRgrG0CD
+#  slack: nishida-lab:2s3lDRcN7ua3vlljTRgrG0CD
 
 # Configuration variables. All variables are global now, but this can be used to
 # trigger a build matrix for different ROS distributions if desired.
@@ -72,7 +72,8 @@ env:
 
 # Install system dependencies, namely a very barebones ROS setup.
 before_install:
-  # Install system dependencies, namely a very barebones ROS setup.
+  - sudo apt-get install ros-$ROS_DISTRO-roscpp ros-$ROS_DISTRO-rosconsole ros-$ROS_DISTRO-sensor-msgs ros-$ROS_DISTRO-cv-bridge ros-$ROS_DISTRO-image-transport
+　# Install system dependencies, namely a very barebones ROS setup.
   - sudo sh -c "echo \"deb http://packages.ros.org/ros/ubuntu $ROS_CI_DESKTOP main\" > /etc/apt/sources.list.d/ros-latest.list"
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
   - sudo apt-get update -qq
