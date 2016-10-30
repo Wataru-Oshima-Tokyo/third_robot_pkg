@@ -10,9 +10,9 @@
   <rosparam command="load" file="$(find steer_drive_controller)/test/common/config/steerbot_controllers.yaml" />
 
   <!-- Start steerbot -->
-  <!--node name="steerbot"
+  <node name="steerbot"
       pkg="steer_drive_controller"
-      type="steerbot"/-->
+      type="steerbot"/>
 
   <!-- Spawn controller -->
   <node name="controller_spawner"
