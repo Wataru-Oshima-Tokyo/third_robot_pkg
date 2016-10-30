@@ -106,9 +106,9 @@ public:
 
   void write()
   {
+    std::ostringstream os;
     if (running_)
     {
-
       // wheels
       for (unsigned int i = 0; i < virtual_rear_wheel_jnt_vel_cmd_.size(); i++)
       {
@@ -124,25 +124,66 @@ public:
       {
         virtual_steer_jnt_pos_[i] = virtual_steer_jnt_pos_cmd_[i];
       }
+
+      // directly get from controller
+      os << wheel_jnt_vel_cmd_ << ", ";
+      os << steer_jnt_pos_cmd_ << ", ";
+
+      // convert to each joint velocity
+      //-- differential drive
+      for (unsigned int i = 0; i < virtual_rear_wheel_jnt_pos_.size(); i++)
+      {
+          os << virtual_rear_wheel_jnt_pos_[i] << ", ";
+      }
+
+      //-- ackerman link
+      for (unsigned int i = 0; i < virtual_steer_jnt_pos_.size(); i++)
+      {
+          os << virtual_steer_jnt_pos_[i] << ", ";
+      }
     }
     else
     {
+      // wheels
       wheel_jnt_pos_= std::numeric_limits<double>::quiet_NaN();
       wheel_jnt_vel_= std::numeric_limits<double>::quiet_NaN();
+      std::fill_n(virtual_rear_wheel_jnt_pos_.begin(), virtual_rear_wheel_jnt_pos_.size(), std::numeric_limits<double>::quiet_NaN());
       std::fill_n(virtual_rear_wheel_jnt_vel_.begin(), virtual_rear_wheel_jnt_vel_.size(), std::numeric_limits<double>::quiet_NaN());
+      // steers
+      steer_jnt_pos_= std::numeric_limits<double>::quiet_NaN();
+      steer_jnt_vel_= std::numeric_limits<double>::quiet_NaN();
       std::fill_n(virtual_steer_jnt_pos_.begin(), virtual_steer_jnt_pos_.size(), std::numeric_limits<double>::quiet_NaN());
       std::fill_n(virtual_steer_jnt_vel_.begin(), virtual_steer_jnt_vel_.size(), std::numeric_limits<double>::quiet_NaN());
+
+      // wheels
+      os << wheel_jnt_pos_ << ", ";
+      os << wheel_jnt_vel_ << ", ";
+      for (unsigned int i = 0; i < virtual_rear_wheel_jnt_pos_.size(); i++)
+      {
+          os << virtual_rear_wheel_jnt_pos_[i] << ", ";
+      }
+
+      // steers
+      os << steer_jnt_pos_ << ", ";
+      os << steer_jnt_vel_ << ", ";
+      for (unsigned int i = 0; i < virtual_steer_jnt_pos_.size(); i++)
+      {
+          os << virtual_steer_jnt_pos_[i] << ", ";
+      }
     }
+    ROS_INFO_STREAM("running_ = " << running_ << ". commands are " << os.str());
   }
 
   bool startCallback(std_srvs::Empty::Request& /*req*/, std_srvs::Empty::Response& /*res*/)
   {
+    ROS_INFO_STREAM("running_ = " << running_ << ".");
     running_ = true;
     return true;
   }
 
   bool stopCallback(std_srvs::Empty::Request& /*req*/, std_srvs::Empty::Response& /*res*/)
   {
+    ROS_INFO_STREAM("running_ = " << running_ << ".");
     running_ = false;
     return true;
   }
