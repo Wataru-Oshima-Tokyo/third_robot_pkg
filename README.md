@@ -1,4 +1,4 @@
-# Third Robotについて
+# Third Robotについて[![Build Status](https://travis-ci.org/CIR-KIT/third_robot_pkg.svg?branch)](https://travis-ci.org/CIR-KIT/third_robot_pkg)
 
 ## 課題
 
