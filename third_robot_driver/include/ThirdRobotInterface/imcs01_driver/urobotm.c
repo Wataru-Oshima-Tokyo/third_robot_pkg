@@ -17,7 +17,7 @@ void exit_program();
 int quit_flag = 1;
 
 #define numOfControllers 2
-static char *devfiles[] = {"/dev/urbtc0", "/dev/urbtc1"};
+static char *devfiles[] = {"/dev/urbtc1", "/dev/urbtc1"};
 
 int main(int argc, char **argv)
 {

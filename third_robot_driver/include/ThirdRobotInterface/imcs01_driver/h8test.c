@@ -17,7 +17,7 @@ int main(int argc, char** argv)
   int vendor, product;
   int status;
 
-  if((fd = open("/dev/urbtc0", O_RDWR)) == -1){
+  if((fd = open("/dev/urbtc1", O_RDWR)) == -1){
     perror("device open error\n");
     exit(1);
   }

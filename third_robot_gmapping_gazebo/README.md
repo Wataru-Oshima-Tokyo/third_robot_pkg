@@ -11,7 +11,7 @@ imcs01のドライバを `insmod` した後、それぞれのデバイスに権�
 
 ```bash
 $ sudo chmod 777 /dev/ttyACM*
-$ sudo chmod 777 /dev/urbtc0
+$ sudo chmod 777 /dev/urbtc1
 ```
 
 この時、`ttyACM0`がArduino、`ttyACM1`が前方下のLRFになっているかを確認しましょう。その後、以下の`launch`で必要なノードを立ち上げます。

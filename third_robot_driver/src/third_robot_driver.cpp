@@ -6,7 +6,7 @@ cirkit::ThirdRobotDriver::ThirdRobotDriver(ros::NodeHandle nh)
   : nh_(nh), rate_(100)
 {
   ros::NodeHandle n("~");
-  n.param<std::string>("imcs01_port", imcs01_port_, "/dev/urbtc0");
+  n.param<std::string>("imcs01_port", imcs01_port_, "/dev/urbtc1");
   double pulse_rate = 0;
   double geer_rate = 0;
   double wheel_diameter_right = 0;

@@ -18,14 +18,14 @@ udevを使えばデバイスの名前を固定できてかつ権限まで設定�
 iMCs01のドライバを`insmod`して、デバイスを接続したら、
 
 ```bash
-udevadm info -a -p $(udevadm info -q path -n /dev/urbtc0)
+udevadm info -a -p $(udevadm info -q path -n /dev/urbtc1)
 ```
 
 を実行する。すると、次のような結果が得られる。途中で略してある。
 
 ```bash
- looking at device '/devices/pci0000:00/0000:00:14.0/usb1/1-1/1-1.4/1-1.4:1.0/usbmisc/urbtc0':
-    KERNEL=="urbtc0"
+ looking at device '/devices/pci0000:00/0000:00:14.0/usb1/1-1/1-1.4/1-1.4:1.0/usbmisc/urbtc1':
+    KERNEL=="urbtc1"
     SUBSYSTEM=="usbmisc"
     DRIVER==""
 
@@ -49,12 +49,12 @@ ATTRS{idProduct}=="0002"
 LRFの場合は固有の情報が `udevadm` を使って取得できないのでROSの力を使う（強い）。roswikiを参考に。
 
 ```
-# ttyACM0: Arduino, ttyACM1: LRF(bottom), ttyACM2: LRF(top), ttyACM3: LRF(rear), urbtc0: iMCs01
+# ttyACM0: Arduino, ttyACM1: LRF(bottom), ttyACM2: LRF(top), ttyACM3: LRF(rear), urbtc1: iMCs01
 KERNEL=="ttyACM*  SUBSYSTEMS=="usb" ATTRS{idVendor}=="2341" ATTRS{idProduct}=="0043" NAME="ttyACM0" MODE="0777"
 
 KERNEL=="ttyACM[0-9]*", ACTION=="add", ATTRS{idVendor}=="15d1", MODE="0777", GROUP="dialout", PROGRAM="/opt/ros/indigo/env.sh rosrun hokuyo_node getID %N q", SYMLINK+="sensors/hokuyo_%c"
 
-KERNEL=="urbtc*"  ATTRS{idVendor}=="1d6b" ATTRS{idProduct}=="0002" MODE="0777" NAME="urbtc0"
+KERNEL=="urbtc*"  ATTRS{idVendor}=="1d6b" ATTRS{idProduct}=="0002" MODE="0777" NAME="urbtc1"
 ```
 
 このドキュメントと同じ階層にあるファイルをコピーしても良い。

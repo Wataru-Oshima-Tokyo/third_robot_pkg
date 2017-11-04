@@ -24,7 +24,7 @@ int main(int argc, char **argv)
   struct ccmd cmd;
   int i,j=0;
 
-  char *dev = "/dev/urbtc0";
+  char *dev = "/dev/urbtc1";
   
   signal(SIGINT, exit_program);
 

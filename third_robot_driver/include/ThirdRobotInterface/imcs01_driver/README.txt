@@ -85,10 +85,10 @@ urobotm
 $ sudo insmod urbtc.ko
 としてドライバをロードしたのちに、デバイスを USB コネクタに差します。
 
-/dev/urbtc0が作られることを確認します。
+/dev/urbtc1が作られることを確認します。
 $ ls -l /dev/urbtc*
 
 アクセス権を変更します。
-$ sudo chmod 777 /dev/urbtc0
+$ sudo chmod 777 /dev/urbtc1
 
 上記のプログラムを順次起動しています。
