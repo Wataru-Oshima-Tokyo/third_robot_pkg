@@ -26,7 +26,7 @@
   <!-- <node name="map_server" pkg="map_server" type="map_server" args="$(find third_robot_2dnav)/map/201511080238.yaml" />  -->
   <!-- Tsukuba Challenge 2016  -->
   <!-- <node name="map_server" pkg="map_server" type="map_server" args="$(find third_robot_2dnav)/map/ooshimizu.yaml" /> -->
-  <node name="map_server" pkg="map_server" type="map_server" args="/home/third/ws/tsukuba/oshimizu_park.yaml" />
+  <node name="map_server" pkg="map_server" type="map_server" args="/home/third/ws/tsukuba/ohshimizu_park.yaml" />
 
   <!-- Tsukuba Kenshu Center -->
   <!-- <node name="map_server" pkg="map_server" type="map_server" args="$(find third_robot_2dnav)/map/kenshu_center.yaml" /> -->
