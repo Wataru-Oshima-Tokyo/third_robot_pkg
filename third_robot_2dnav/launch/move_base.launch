@@ -26,13 +26,15 @@
   <!-- <node name="map_server" pkg="map_server" type="map_server" args="$(find third_robot_2dnav)/map/201511080238.yaml" />  -->
   <!-- Tsukuba Challenge 2016  -->
   <!-- <node name="map_server" pkg="map_server" type="map_server" args="$(find third_robot_2dnav)/map/ooshimizu.yaml" /> -->
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find third_robot_2dnav)/map/tukutyare2016_outside-8.yaml" />
+  <node name="map_server" pkg="map_server" type="map_server" args="/home/third/ws/tsukuba/oshimizu_park.yaml" />
 
   <!-- Tsukuba Kenshu Center -->
   <!-- <node name="map_server" pkg="map_server" type="map_server" args="$(find third_robot_2dnav)/map/kenshu_center.yaml" /> -->
   <!-- Waypoint marker -->
   
-  <node pkg="ros_waypoint_generator" type="ros_waypoint_server" name="ros_waypoint_server" args="--load $(find waypoint_navigator)/waypoints/2016-11-06-11-32-09.csv" output="screen" />
+  <include file="$(find cirkit_waypoint_navigator)/launch/waypoint_navigator.launch">
+    <arg name="waypoint_filename" value="/home/third/ws/tsukuba/park.csv" />
+  </include>
   
   <!--- Run URG filter-->
   <include file="$(find third_robot_urg_filter)/launch/urg_laser_filter.launch" />
