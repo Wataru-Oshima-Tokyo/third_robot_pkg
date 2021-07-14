@@ -40,14 +40,15 @@
 #include <tf/transform_datatypes.h>
 
 // register as a RecoveryBehavior plugin
-PLUGINLIB_DECLARE_CLASS(step_back_and_max_steer_recovery, StepBackAndMaxSteerRecovery, step_back_and_max_steer_recovery::StepBackAndMaxSteerRecovery,      
+//PLUGINLIB_DECLARE_CLASS(step_back_and_max_steer_recovery, StepBackAndMaxSteerRecovery, step_back_and_max_steer_recovery::StepBackAndMaxSteerRecovery,      
                         nav_core::RecoveryBehavior)
-
+PLUGINLIB_EXPORT_CLASS(step_back_and_max_steer_recovery::StepBackAndMaxSteerRecovery,nav_core::RecoveryBehavior)
 namespace step_back_and_max_steer_recovery
 {
 
 StepBackAndMaxSteerRecovery::StepBackAndMaxSteerRecovery () :
-  global_costmap_(NULL), local_costmap_(NULL), tf_(NULL), initialized_(false)
+  //global_costmap_(NULL), local_costmap_(NULL), tf_(NULL), initialized_(false)
+  global_costmap_(NULL), local_costmap_(NULL),  initialized_(false)
 {
     TWIST_STOP.linear.x = 0.0;
     TWIST_STOP.linear.y = 0.0;
@@ -62,7 +63,7 @@ StepBackAndMaxSteerRecovery::~StepBackAndMaxSteerRecovery ()
   delete world_model_;
 }
 
-void StepBackAndMaxSteerRecovery::initialize (std::string name, tf::TransformListener* tf,
+void StepBackAndMaxSteerRecovery::initialize (std::string name, tf2_ros::TransformListener *tf,
                                 cmap::Costmap2DROS* global_cmap, cmap::Costmap2DROS* local_cmap)
 {
   ROS_ASSERT(!initialized_);
