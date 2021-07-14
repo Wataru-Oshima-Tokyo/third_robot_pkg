@@ -23,7 +23,7 @@ if(NOT EIGEN3_FOUND)
   find_package(cmake_modules REQUIRED)
   find_package(Eigen REQUIRED)
   set(Eigen3_INCLUDE_DIRS ${EIGEN_INCLUDE_DIRS})
-  set(EIGEN3_DEFINITIONS ${EIGEN_DEFINITIONS}
+  set(EIGEN3_DEFINITIONS ${EIGEN_DEFINITIONS})
 endif()
 
 include_directories(
