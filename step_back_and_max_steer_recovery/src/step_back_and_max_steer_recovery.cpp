@@ -38,13 +38,12 @@
 #include <step_back_and_max_steer_recovery/step_back_and_max_steer_recovery.h>
 #include <pluginlib/class_list_macros.h>
 //#include <tf/transform_datatypes.h>
-#include "tf2/transform_datatypes.h"
+#include <tf2/transform_datatypes.h>
 #include <tf2/convert.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 // register as a RecoveryBehavior plugin
-//PLUGINLIB_DECLARE_CLASS(step_back_and_max_steer_recovery, StepBackAndMaxSteerRecovery, step_back_and_max_steer_recovery::StepBackAndMaxSteerRecovery,      
-                        nav_core::RecoveryBehavior)
+//PLUGINLIB_DECLARE_CLASS(step_back_and_max_steer_recovery, StepBackAndMaxSteerRecovery, step_back_and_max_steer_recovery::StepBackAndMaxSteerRecovery,nav_core::RecoveryBehavior)
 PLUGINLIB_EXPORT_CLASS(step_back_and_max_steer_recovery::StepBackAndMaxSteerRecovery,nav_core::RecoveryBehavior)
 namespace step_back_and_max_steer_recovery
 {
