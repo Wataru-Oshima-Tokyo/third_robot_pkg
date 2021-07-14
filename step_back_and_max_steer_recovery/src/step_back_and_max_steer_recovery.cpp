@@ -37,7 +37,10 @@
 
 #include <step_back_and_max_steer_recovery/step_back_and_max_steer_recovery.h>
 #include <pluginlib/class_list_macros.h>
-#include <tf/transform_datatypes.h>
+//#include <tf/transform_datatypes.h>
+#include "tf2/transform_datatypes.h"
+#include <tf2/convert.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 // register as a RecoveryBehavior plugin
 //PLUGINLIB_DECLARE_CLASS(step_back_and_max_steer_recovery, StepBackAndMaxSteerRecovery, step_back_and_max_steer_recovery::StepBackAndMaxSteerRecovery,      
@@ -47,8 +50,8 @@ namespace step_back_and_max_steer_recovery
 {
 
 StepBackAndMaxSteerRecovery::StepBackAndMaxSteerRecovery () :
-  //global_costmap_(NULL), local_costmap_(NULL), tf_(NULL), initialized_(false)
-  global_costmap_(NULL), local_costmap_(NULL),  initialized_(false)
+  global_costmap_(NULL), local_costmap_(NULL), tf_(NULL), initialized_(false)
+  
 {
     TWIST_STOP.linear.x = 0.0;
     TWIST_STOP.linear.y = 0.0;
@@ -63,7 +66,7 @@ StepBackAndMaxSteerRecovery::~StepBackAndMaxSteerRecovery ()
   delete world_model_;
 }
 
-void StepBackAndMaxSteerRecovery::initialize (std::string name, tf2_ros::TransformListener *tf,
+void StepBackAndMaxSteerRecovery::initialize (std::string name, tf2_ros::TransformListener* tf,
                                 cmap::Costmap2DROS* global_cmap, cmap::Costmap2DROS* local_cmap)
 {
   ROS_ASSERT(!initialized_);
@@ -246,12 +249,13 @@ gm::Twist StepBackAndMaxSteerRecovery::scaleGivenAccelerationLimits (const gm::T
 // Get pose in local costmap framoe
 gm::Pose2D StepBackAndMaxSteerRecovery::getCurrentLocalPose () const
 {
-  tf::Stamped<tf::Pose> p;
+  tf2::Stamped<tf2::Transform> p
+  //tf::Stamped<tf::Pose> p;
   local_costmap_->getRobotPose(p);
   gm::Pose2D pose;
   pose.x = p.getOrigin().x();
   pose.y = p.getOrigin().y();
-  pose.theta = tf::getYaw(p.getRotation());
+  pose.theta = tf2::getYaw(p.getRotation());
   return pose;
 }
 
